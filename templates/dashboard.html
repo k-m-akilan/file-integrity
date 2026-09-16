@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FIM Security Dashboard</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b1220, #0f172a, #1e1b4b);
+            color: #e5e7eb;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 25px;
+            font-size: 28px;
+            background: linear-gradient(90deg, #38bdf8, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
+        /* =====================
+           STATS CARDS
+        ====================== */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 0 30px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 18px;
+            text-align: center;
+            transition: 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .card h3 {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .critical { border-left: 4px solid #ef4444; }
+        .high { border-left: 4px solid #f97316; }
+        .medium { border-left: 4px solid #eab308; }
+        .low { border-left: 4px solid #22c55e; }
+
+        /* =====================
+           TABLE SECTION
+        ====================== */
+
+        .table-container {
+            padding: 0 30px 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        thead {
+            background: rgba(255,255,255,0.08);
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+        }
+
+        th {
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        tr {
+            transition: 0.2s;
+        }
+
+        tr:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        /* =====================
+           SEVERITY BADGES
+        ====================== */
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .CRITICAL {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .HIGH {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+        }
+
+        .MEDIUM {
+            background: rgba(234, 179, 8, 0.2);
+            color: #eab308;
+        }
+
+        .LOW {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        /* =====================
+           RESPONSIVE
+        ====================== */
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            th, td {
+                font-size: 12px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1>File Integrity Monitoring Dashboard</h1>
+
+<!-- STATS -->
+<div class="stats">
+
+    <div class="card">
+        <h3>Total Alerts</h3>
+        <p>{{ stats.total }}</p>
+    </div>
+
+    <div class="card critical">
+        <h3>Critical</h3>
+        <p>{{ stats.critical }}</p>
+    </div>
+
+    <div class="card high">
+        <h3>High</h3>
+        <p>{{ stats.high }}</p>
+    </div>
+
+    <div class="card medium">
+        <h3>Medium</h3>
+        <p>{{ stats.medium }}</p>
+    </div>
+
+    <div class="card low">
+        <h3>Low</h3>
+        <p>{{ stats.low }}</p>
+    </div>
+
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+
+<table>
+
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Severity</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+
+    <tbody id="tableBody"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+async function updateDashboard() {
+
+    try {
+
+        const res = await fetch("/api/logs", { cache: "no-store" });
+        const data = await res.json();
+
+        const table = document.getElementById("tableBody");
+
+        table.innerHTML = "";
+
+        data.forEach(log => {
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${log.time}</td>
+                <td><span class="badge ${log.severity}">${log.severity}</span></td>
+                <td>${log.message}</td>
+            `;
+
+            table.appendChild(row);
+        });
+
+    } catch (err) {
+        console.log("Update error:", err);
+    }
+}
+
+updateDashboard();
+setInterval(updateDashboard, 1500);
+
+</script>
+
+</body>
+</html>

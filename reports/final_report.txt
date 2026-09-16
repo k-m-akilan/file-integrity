@@ -1,0 +1,40 @@
+FILE INTEGRITY MONITORING SYSTEM REPORT
+
+Project Overview:
+A real-time File Integrity Monitoring system built using Python capable of detecting unauthorized file changes, generating alerts, logging security events, and recovering deleted files.
+
+Core Features Implemented:
+- SHA-256 hashing
+- Real-time monitoring
+- File modification detection
+- File deletion detection
+- New file detection
+- Security logging
+- Ignore rules
+- Error handling
+
+Bonus Features Implemented:
+- Email alerts
+- Automatic file recovery
+- Multi-folder monitoring
+- Threat severity levels
+- SQLite database logging
+
+Technologies Used:
+- Python
+- watchdog
+- hashlib
+- SQLite
+- logging
+- colorama
+
+Testing Performed:
+- File modification testing
+- File deletion testing
+- File creation testing
+- Recovery testing
+- Email alert testing
+- Database logging testing
+
+Result:
+The File Integrity Monitoring system successfully detects unauthorized file changes, logs suspicious activity, generates alerts, and recovers deleted files in real time.
